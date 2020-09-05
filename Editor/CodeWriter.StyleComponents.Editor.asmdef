@@ -1,0 +1,17 @@
+{
+    "name": "CodeWriter.StyleComponents.Editor",
+    "references": [
+        "GUID:379c6026ecfd25643a986527ae827690"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
