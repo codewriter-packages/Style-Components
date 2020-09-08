@@ -1,3 +1,5 @@
+using CodeWriter.StyleComponents.StyleAssets;
+
 #if TEXT_MESH_PRO
 namespace CodeWriter.StyleComponents
 {
@@ -6,7 +8,7 @@ namespace CodeWriter.StyleComponents
 
     [RequireComponent(typeof(TMP_Text))]
     [AddComponentMenu("Style Components/Tmp Text Color Style")]
-    public sealed class TmpTextColorStyle : Style<TMP_Text, Color>
+    public sealed class TmpTextColorStyle : Style<TMP_Text, Color, ColorStyleAsset>
     {
         protected override void Apply(TMP_Text target, Color value) => target.color = value;
     }

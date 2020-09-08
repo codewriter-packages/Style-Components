@@ -1,3 +1,5 @@
+using CodeWriter.StyleComponents.StyleAssets;
+
 namespace CodeWriter.StyleComponents
 {
     using UnityEngine;
@@ -5,7 +7,7 @@ namespace CodeWriter.StyleComponents
 
     [RequireComponent(typeof(Image))]
     [AddComponentMenu("Style Components/Image Sprite Style")]
-    public sealed class ImageSpriteStyle : Style<Image, Sprite>
+    public sealed class ImageSpriteStyle : Style<Image, Sprite, SpriteStyleAsset>
     {
         protected override void Apply(Image target, Sprite value) => target.sprite = value;
     }

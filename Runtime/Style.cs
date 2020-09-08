@@ -4,7 +4,7 @@ namespace CodeWriter.StyleComponents
     using JetBrains.Annotations;
     using UnityEngine;
 
-    public abstract class Style : MonoBehaviour
+    public abstract class Style : MonoBehaviour, IStyle
     {
         [SerializeField] private StyleContext context = default;
         [SerializeField] private StyleNamesSource[] namesSources = new StyleNamesSource[0];
@@ -27,6 +27,22 @@ namespace CodeWriter.StyleComponents
             Apply(index);
         }
 
+        protected bool TryGetContextVariables(out string[] variables)
+        {
+            if (Context != null && Context.VariablesArray != null)
+            {
+                variables = Context.VariablesArray;
+                return true;
+            }
+
+            variables = default;
+            return false;
+        }
+
+        protected virtual void Reset()
+        {
+        }
+
         public void FindMissingFromSources(Action<string> found)
         {
             foreach (var source in namesSources)
@@ -42,5 +58,10 @@ namespace CodeWriter.StyleComponents
                 }
             }
         }
+    }
+
+    public interface IStyle
+    {
+        void FindMissingFromSources(Action<string> found);
     }
 }

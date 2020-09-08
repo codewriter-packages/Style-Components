@@ -6,7 +6,7 @@ namespace CodeWriter.StyleComponents
 
     [RequireComponent(typeof(I2.Loc.Localize))]
     [AddComponentMenu("Style Components/I2 Localize Text Style")]
-    public sealed class I2LocalizationTextStyle : Style<I2.Loc.Localize, string>
+    public sealed class I2LocalizationTextStyle : Style<I2.Loc.Localize, string, TextStyleAsset>
     {
         protected override void Apply(I2.Loc.Localize target, string value)
         {

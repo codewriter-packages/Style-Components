@@ -5,8 +5,8 @@ namespace CodeWriter.StyleComponents
 
     public class StyleCompose : Style
     {
-        [SerializeField] private Style[] children = default;
-        [SerializeField] private StyleData[] data = default;
+        [SerializeField] private Style[] children = new Style[0];
+        [SerializeField] private StyleData[] data = new StyleData[0];
 
         [Serializable]
         public class StyleData
