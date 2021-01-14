@@ -22,11 +22,6 @@ namespace CodeWriter.StyleComponents
 
         public StyleListEditor(SerializedObject serializedObject, Action<int> apply, bool editable)
         {
-            if (!(serializedObject.targetObject is IStyle))
-            {
-                throw new ArgumentException("SerializedObject must be IStyle", nameof(serializedObject));
-            }
-
             _serializedObject = serializedObject;
             _apply = apply;
             _editable = editable;
@@ -39,31 +34,6 @@ namespace CodeWriter.StyleComponents
         public void DoLayout()
         {
             _styleList.DoLayoutList();
-
-            DrawMissingFromSources();
-        }
-
-        private void DrawMissingFromSources()
-        {
-            var options = new[] {GUILayout.Width(80), GUILayout.Height(36)};
-
-            var baseStyle = (IStyle) _serializedObject.targetObject;
-            baseStyle.FindMissingFromSources(item =>
-            {
-                var msg = $"Missing {item}";
-                GUILayout.BeginHorizontal();
-                EditorGUILayout.HelpBox(msg, MessageType.Error);
-
-                if (GUILayout.Button("Add", options))
-                {
-                    var index = _styleList.serializedProperty.arraySize;
-                    _styleValuesProp.InsertArrayElementAtIndex(index);
-                    _styleNamesProp.InsertArrayElementAtIndex(index);
-                    _styleNamesProp.GetArrayElementAtIndex(index).stringValue = item;
-                }
-
-                GUILayout.EndHorizontal();
-            });
         }
 
         private ReorderableList CreateStyleList(SerializedProperty namesProp, SerializedProperty valuesProp)

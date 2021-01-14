@@ -5,6 +5,9 @@ namespace CodeWriter.StyleComponents
 
     public class StyleContext : MonoBehaviour
     {
+#if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.TableList(AlwaysExpanded = true, ShowPaging = false)]
+#endif
         [SerializeField] private Variable[] variables = new Variable[0];
 
         [Serializable]

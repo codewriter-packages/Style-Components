@@ -8,18 +8,21 @@ namespace CodeWriter.StyleComponents
     {
         private const string TargetPropName = "target";
         private const string AssetPropName = "asset";
+        private const string ContextPropName = "context";
 
         private static readonly string[] ExcludedProperties =
         {
             "m_Script",
             TargetPropName,
             AssetPropName,
+            ContextPropName,
             StyleListEditor.StyleNamesPropName,
             StyleListEditor.StyleValuesPropName
         };
 
         private SerializedProperty _targetProp;
         private SerializedProperty _assetProp;
+        private SerializedProperty _contextProp;
         private StyleListEditor _selfStyleListEditor;
 
         private SerializedObject _styleAssetSerializedObject;
@@ -29,12 +32,15 @@ namespace CodeWriter.StyleComponents
         {
             _targetProp = serializedObject.FindProperty(TargetPropName);
             _assetProp = serializedObject.FindProperty(AssetPropName);
+            _contextProp = serializedObject.FindProperty(ContextPropName);
             _selfStyleListEditor = new StyleListEditor(serializedObject, Apply, true);
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
+            
+            StyleEditorEx.DrawContextField(_contextProp);
 
             DrawPropertiesExcluding(serializedObject, ExcludedProperties);
 

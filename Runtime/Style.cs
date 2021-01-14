@@ -4,10 +4,9 @@ namespace CodeWriter.StyleComponents
     using JetBrains.Annotations;
     using UnityEngine;
 
-    public abstract class Style : MonoBehaviour, IStyle
+    public abstract class Style : MonoBehaviour
     {
         [SerializeField] private StyleContext context = default;
-        [SerializeField] private StyleNamesSource[] namesSources = new StyleNamesSource[0];
 
         public abstract string[] StyleNames { get; }
 
@@ -15,8 +14,16 @@ namespace CodeWriter.StyleComponents
 
         public abstract void Apply(int styleIndex);
 
+        protected virtual void OnEnable() {
+            
+        }
+
         public void Apply(string styleName)
         {
+            if (!enabled) {
+                return;
+            }
+        
             var index = Array.IndexOf(StyleNames, styleName);
             if (index == -1)
             {
@@ -42,26 +49,5 @@ namespace CodeWriter.StyleComponents
         protected virtual void Reset()
         {
         }
-
-        public void FindMissingFromSources(Action<string> found)
-        {
-            foreach (var source in namesSources)
-            {
-                if (source == null) continue;
-
-                foreach (var item in source.Names)
-                {
-                    if (Array.IndexOf(StyleNames, item) == -1)
-                    {
-                        found(item);
-                    }
-                }
-            }
-        }
-    }
-
-    public interface IStyle
-    {
-        void FindMissingFromSources(Action<string> found);
     }
 }
