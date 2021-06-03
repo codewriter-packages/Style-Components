@@ -5,7 +5,6 @@ namespace CodeWriter.StyleComponents
     using TMPro;
     using UnityEngine;
     using StyleAssets;
-    using Cysharp.Text;
     using ViewBinding;
 
     [RequireComponent(typeof(TMP_Text))]
