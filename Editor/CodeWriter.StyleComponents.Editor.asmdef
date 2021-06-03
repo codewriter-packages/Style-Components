@@ -1,7 +1,8 @@
 {
     "name": "CodeWriter.StyleComponents.Editor",
     "references": [
-        "GUID:379c6026ecfd25643a986527ae827690"
+        "CodeWriter.StyleComponents.Runtime",
+        "CodeWriter.ViewBinding"
     ],
     "includePlatforms": [
         "Editor"

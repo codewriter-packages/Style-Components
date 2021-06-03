@@ -1,3 +1,5 @@
+using CodeWriter.ViewBinding;
+
 namespace CodeWriter.StyleComponents {
     using System;
     using UnityEditor;
@@ -17,7 +19,7 @@ namespace CodeWriter.StyleComponents {
                 EditorGUI.EndDisabledGroup();
                 if (GUILayout.Button("Use Context", EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
                     UseTarget<MonoBehaviour>(contextProp.serializedObject, it => {
-                        contextProp.objectReferenceValue = it.GetComponentInParent<StyleContext>();
+                        contextProp.objectReferenceValue = it.GetComponentInParent<ViewContext>();
                         return true;
                     });
                 }
