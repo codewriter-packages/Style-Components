@@ -2,8 +2,7 @@
     "name": "CodeWriter.StyleComponents.Runtime",
     "references": [
         "Unity.TextMeshPro",
-        "CodeWriter.ViewBinding",
-        "ZString"
+        "CodeWriter.ViewBinding"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
