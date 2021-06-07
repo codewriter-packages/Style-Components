@@ -1,17 +1,11 @@
 namespace CodeWriter.StyleComponents
 {
     using System;
-    using JetBrains.Annotations;
     using UnityEngine;
-    using ViewBinding;
 
     public abstract class Style : MonoBehaviour
     {
-        [SerializeField] private ViewContext context = default;
-
         public abstract string[] StyleNames { get; }
-
-        [CanBeNull] public ViewContext Context => context;
 
         public abstract void Apply(int styleIndex);
 

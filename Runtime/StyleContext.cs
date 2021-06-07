@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using UniMob;
+
 namespace CodeWriter.StyleComponents
 {
     using System;
@@ -14,6 +17,8 @@ namespace CodeWriter.StyleComponents
         [SerializeField]
         private Variable[] variables = new Variable[0];
 
+        private Dictionary<string, MutableAtom<string>> _atoms = new Dictionary<string, MutableAtom<string>>();
+
         [Serializable]
         private class Variable
         {
@@ -21,6 +26,7 @@ namespace CodeWriter.StyleComponents
             public string defaultValue;
         }
 
+#if UNITY_EDITOR
         protected override void OnValidate()
         {
             base.OnValidate();
@@ -32,6 +38,7 @@ namespace CodeWriter.StyleComponents
                 variables = new Variable[0];
             }
         }
+#endif
 
         private void Awake()
         {
@@ -40,15 +47,24 @@ namespace CodeWriter.StyleComponents
 
         public void SetVariable(string key, string value)
         {
-            var viewVariable = FindVariable(key);
-            if (viewVariable is ViewVariableString viewVariableString)
+            if (_atoms.TryGetValue(key, out var atom))
             {
-                viewVariableString.Value = value;
+                atom.Value = value;
             }
             else
             {
-                var obj = gameObject;
-                Debug.LogError($"Key {key} not exists at {obj.name}", obj);
+                var viewVariable = FindVariable<ViewVariableString>(key);
+                if (viewVariable != null)
+                {
+                    atom = Atom.Value(value);
+                    _atoms.Add(key, atom);
+                    viewVariable.SetSource(atom);
+                }
+                else
+                {
+                    var obj = gameObject;
+                    Debug.LogError($"Key {key} not exists at {obj.name}", obj);
+                }
             }
         }
 
@@ -64,7 +80,20 @@ namespace CodeWriter.StyleComponents
                 var viewVariable = new ViewVariableString();
                 viewVariable.SetContext(this);
                 viewVariable.SetName(variable.key);
-                viewVariable.Value = variable.defaultValue;
+
+#if UNITY_EDITOR
+                if (!Application.isPlaying)
+                {
+                    viewVariable.SetValueEditorOnly(variable.defaultValue);
+                }
+                else
+#endif
+                {
+                    var atom = Atom.Value(variable.defaultValue);
+                    _atoms.Add(variable.key, atom);
+                    viewVariable.SetSource(atom);
+                }
+
                 UnsafeRegisterVariable(viewVariable);
             }
         }

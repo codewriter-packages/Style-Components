@@ -2,7 +2,9 @@
     "name": "CodeWriter.StyleComponents.Runtime",
     "references": [
         "Unity.TextMeshPro",
-        "CodeWriter.ViewBinding"
+        "CodeWriter.ViewBinding",
+        "CodeWriter.ViewBinding.Applicators",
+        "UniMob"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -8,22 +8,20 @@ namespace CodeWriter.StyleComponents
     using Object = UnityEngine.Object;
 
     [CustomEditor(typeof(StyleCompose))]
-    public class StyleComposeEditor : Editor {
+    public class StyleComposeEditor : Editor
+    {
         private const string ChildrenPropName = "children";
         private const string DataPropName = "data";
-        private const string ContextPropName = "context";
 
-        private static readonly string[] ExcludedProperties = {"m_Script", DataPropName, ContextPropName, ChildrenPropName};
+        private static readonly string[] ExcludedProperties = {"m_Script", DataPropName, ChildrenPropName};
 
         private SerializedProperty _dataProp;
-        private SerializedProperty _contextProp;
         private SerializedProperty _childrenProp;
         private ReorderableList _list;
 
         private void OnEnable()
         {
             _dataProp = serializedObject.FindProperty(DataPropName);
-            _contextProp = serializedObject.FindProperty(ContextPropName);
             _childrenProp = serializedObject.FindProperty(ChildrenPropName);
             _list = CreateList(serializedObject, _dataProp);
         }
@@ -32,10 +30,8 @@ namespace CodeWriter.StyleComponents
         {
             serializedObject.Update();
 
-            StyleEditorEx.DrawContextField(this._contextProp);
-
             DrawPropertiesExcluding(serializedObject, ExcludedProperties);
-            
+
             EditorGUI.BeginDisabledGroup(true);
             EditorGUILayout.PropertyField(this._childrenProp);
             EditorGUI.EndDisabledGroup();
@@ -60,7 +56,7 @@ namespace CodeWriter.StyleComponents
 
             serializedObject.ApplyModifiedProperties();
         }
-        
+
         private static ReorderableList CreateList(SerializedObject serializedObject, SerializedProperty property)
         {
             return new ReorderableList(serializedObject, property, false, true, true, true)
@@ -113,8 +109,9 @@ namespace CodeWriter.StyleComponents
                         {
                             styleIndex = 0;
                         }
-                        
-                        if (child.StyleNames.Length > 0) {
+
+                        if (child.StyleNames.Length > 0)
+                        {
                             EditorGUI.BeginChangeCheck();
 
                             styleIndex = EditorGUI.Popup(valueRect, styleIndex, child.StyleNames);
@@ -128,10 +125,12 @@ namespace CodeWriter.StyleComponents
                                 Apply(serializedObject, index);
                             }
                         }
-                        else {
+                        else
+                        {
                             var color = GUI.color;
                             GUI.color *= Color.yellow;
-                            if (GUI.Button(valueRect, "No styles found. Click to select invalid object")) {
+                            if (GUI.Button(valueRect, "No styles found. Click to select invalid object"))
+                            {
                                 EditorGUIUtility.PingObject(child);
                             }
 

@@ -39,8 +39,11 @@ namespace CodeWriter.StyleComponents
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            
-            StyleEditorEx.DrawContextField(_contextProp);
+
+            if (_contextProp != null)
+            {
+                StyleEditorEx.DrawContextField(_contextProp);
+            }
 
             DrawPropertiesExcluding(serializedObject, ExcludedProperties);
 

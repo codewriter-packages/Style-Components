@@ -9,53 +9,23 @@ namespace CodeWriter.StyleComponents
 
     [RequireComponent(typeof(TMP_Text))]
     [AddComponentMenu("Style Components/Tmp Text Style")]
-    public sealed class TmpTextStyle : Style<TMP_Text, string, TextStyleAsset>, IViewContextListener
+    public sealed class TmpTextStyle : Style<TMP_Text, string, TextStyleAsset>
     {
-        private TMP_Text _lastTarget;
-        private string _lastValue;
+        [SerializeField]
+        private ViewContextBase context = default;
+
+        [SerializeField]
+        private ViewContextBase[] extraContexts = new ViewContextBase[0];
 
         protected override void Apply(TMP_Text target, string value)
         {
-            _lastTarget = target;
-            _lastValue = value;
-
-            if (Context != null)
+            if (context != null || extraContexts.Length != 0)
             {
-                target.SetText(Context.FormatText(value));
+                target.SetText(TextFormatUtility.FormatText(value, context, extraContexts));
             }
             else
             {
                 target.text = value;
-            }
-        }
-
-        protected override void Start()
-        {
-            base.Start();
-
-            ReSubScribe();
-        }
-
-        protected override void OnValidate()
-        {
-            base.OnValidate();
-
-            ReSubScribe();
-        }
-
-        private void ReSubScribe()
-        {
-            if (Context != null)
-            {
-                Context.AddListener(this);
-            }
-        }
-
-        public void OnContextVariableChanged(ViewVariable variable)
-        {
-            if (_lastTarget != null)
-            {
-                Apply(_lastTarget, _lastValue);
             }
         }
     }
