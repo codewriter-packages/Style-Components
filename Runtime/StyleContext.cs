@@ -29,16 +29,12 @@ namespace CodeWriter.StyleComponents
                     return CreateVariablesArray(variables);
                 }
 #endif
+                EnsureVariablesArray();
 
                 return _variablesArray;
             }
         }
-
-        private void Awake()
-        {
-            _variablesArray = CreateVariablesArray(variables);
-        }
-
+        
         private static string[] CreateVariablesArray(Variable[] variables)
         {
             var array = new string[variables.Length * 2];
@@ -55,6 +51,8 @@ namespace CodeWriter.StyleComponents
 
         public void SetVariable(string key, string value)
         {
+            EnsureVariablesArray();
+        
             for (var i = 0; i < _variablesArray.Length; i += 2)
             {
                 if (_variablesArray[i].Equals(key, StringComparison.InvariantCulture))
@@ -66,6 +64,12 @@ namespace CodeWriter.StyleComponents
 
             var obj = gameObject;
             Debug.LogError($"Key {key} not exists at {obj.name}", obj);
+        }
+
+        private void EnsureVariablesArray() {
+            if (_variablesArray == null) {
+                _variablesArray = CreateVariablesArray(variables);
+            }
         }
     }
 }
