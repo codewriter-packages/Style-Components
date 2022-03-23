@@ -58,7 +58,7 @@ namespace CodeWriter.StyleComponents
                 {
                     atom = Atom.Value(value);
                     _atoms.Add(key, atom);
-                    viewVariable.SetSource(atom);
+                    viewVariable.SetSource(() => atom.Value);
                 }
                 else
                 {
@@ -91,7 +91,7 @@ namespace CodeWriter.StyleComponents
                 {
                     var atom = Atom.Value(variable.defaultValue);
                     _atoms.Add(variable.key, atom);
-                    viewVariable.SetSource(atom);
+                    viewVariable.SetSource(() => atom.Value);
                 }
 
                 UnsafeRegisterVariable(viewVariable);
