@@ -32,29 +32,55 @@ namespace CodeWriter.StyleComponents
 
             DrawPropertiesExcluding(serializedObject, ExcludedProperties);
 
-            EditorGUI.BeginDisabledGroup(true);
-            EditorGUILayout.PropertyField(this._childrenProp);
-            EditorGUI.EndDisabledGroup();
-
-            GUILayout.Space(5);
-
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Fill Children", GUILayout.Width(220), GUILayout.Height(26)))
-            {
-                FillChildren(serializedObject);
-            }
-
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-
-            GUILayout.Space(10);
+            DoChildrenGUI();
 
             _list.DoLayoutList();
 
             FillData(serializedObject);
 
             serializedObject.ApplyModifiedProperties();
+        }
+
+        private void DoChildrenGUI()
+        {
+            var headerRect = GUILayoutUtility.GetRect(GUIContent.none, GUI.skin.label);
+            var headerLabelRect = new Rect(headerRect)
+            {
+                width = EditorGUIUtility.labelWidth
+            };
+            var headerContentRect = new Rect(headerRect)
+            {
+                xMin = headerLabelRect.xMax
+            };
+
+            EditorGUI.BeginDisabledGroup(true);
+            EditorGUI.PropertyField(headerLabelRect, _childrenProp, false);
+
+            if (_childrenProp.isExpanded)
+            {
+                EditorGUI.indentLevel++;
+
+                for (int i = 0, len = _childrenProp.arraySize; i < len; i++)
+                {
+                    EditorGUILayout.PropertyField(_childrenProp.GetArrayElementAtIndex(i));
+                }
+
+                if (_childrenProp.arraySize == 0)
+                {
+                    GUILayout.Label("No listeners");
+                }
+
+                EditorGUI.indentLevel--;
+            }
+
+            EditorGUI.EndDisabledGroup();
+
+            if (GUI.Button(headerContentRect, "Fill Children"))
+            {
+                FillChildren(serializedObject);
+            }
+
+            EditorGUILayout.Space();
         }
 
         private static ReorderableList CreateList(SerializedObject serializedObject, SerializedProperty property)
