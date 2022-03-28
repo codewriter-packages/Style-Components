@@ -18,6 +18,17 @@ namespace CodeWriter.StyleComponents
         {
             Apply();
         }
+
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+
+            var target = GetTarget();
+            if (target != null)
+            {
+                target.EditorTrackModifications(this);
+            }
+        }
 #endif
     }
 }

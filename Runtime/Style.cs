@@ -1,3 +1,5 @@
+using CodeWriter.ViewBinding;
+
 namespace CodeWriter.StyleComponents
 {
     using System;
@@ -37,5 +39,11 @@ namespace CodeWriter.StyleComponents
         protected virtual void OnValidate()
         {
         }
+
+#if UNITY_EDITOR
+        protected internal virtual void EditorTrackModifications(IEditorViewContextListener listener)
+        {
+        }
+#endif
     }
 }

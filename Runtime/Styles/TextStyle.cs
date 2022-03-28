@@ -21,22 +21,23 @@ namespace CodeWriter.StyleComponents
 
         protected override void Apply(Text target, string value)
         {
-            if (context != null || extraContexts.Length != 0)
+            if (_stringBuilder == null)
             {
-                if (_stringBuilder == null)
-                {
-                    _stringBuilder = new StringBuilder();
-                }
+                _stringBuilder = new StringBuilder();
+            }
 
-                _stringBuilder.Clear();
-                TextFormatUtility.FormatText(_stringBuilder, value, context, extraContexts);
-                target.text = _stringBuilder.ToString();
-                _stringBuilder.Clear();
-            }
-            else
-            {
-                target.text = value;
-            }
+            TextFormatUtility.FormatText(_stringBuilder, value, context, extraContexts);
+            target.text = _stringBuilder.ToString();
         }
+
+#if UNITY_EDITOR
+        protected internal override void EditorTrackModifications(IEditorViewContextListener listener)
+        {
+            base.EditorTrackModifications(listener);
+
+            listener.EditorTrackModificationsOf(context);
+            listener.EditorTrackModificationsOf(extraContexts);
+        }
+#endif
     }
 }

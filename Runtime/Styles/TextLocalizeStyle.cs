@@ -1,17 +1,15 @@
 using System.Text;
 
-#if TEXT_MESH_PRO
-
 namespace CodeWriter.StyleComponents
 {
-    using TMPro;
     using UnityEngine;
+    using UnityEngine.UI;
     using StyleAssets;
     using ViewBinding;
 
-    [RequireComponent(typeof(TMP_Text))]
-    [AddComponentMenu("Style Components/Tmp Text Style")]
-    public sealed class TmpTextStyle : Style<TMP_Text, string, TextStyleAsset>
+    [RequireComponent(typeof(Text))]
+    [AddComponentMenu("Style Components/Text Localize Style")]
+    public sealed class TextLocalizeStyle : Style<Text, string, TextStyleAsset>
     {
         [SerializeField]
         private ViewContextBase context = default;
@@ -21,7 +19,7 @@ namespace CodeWriter.StyleComponents
 
         private StringBuilder _stringBuilder;
 
-        protected override void Apply(TMP_Text target, string value)
+        protected override void Apply(Text target, string value)
         {
             if (_stringBuilder == null)
             {
@@ -29,8 +27,12 @@ namespace CodeWriter.StyleComponents
             }
 
             TextFormatUtility.FormatText(_stringBuilder, value, context, extraContexts);
-            target.SetText(_stringBuilder);
+            var localizedString = BindingsLocalization.Localize(_stringBuilder);
+
+            TextFormatUtility.FormatText(_stringBuilder, localizedString, context, extraContexts);
+            target.text = _stringBuilder.ToString();
         }
+
 
 #if UNITY_EDITOR
         protected internal override void EditorTrackModifications(IEditorViewContextListener listener)
@@ -43,4 +45,3 @@ namespace CodeWriter.StyleComponents
 #endif
     }
 }
-#endif

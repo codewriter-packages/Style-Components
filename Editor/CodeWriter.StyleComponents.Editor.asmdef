@@ -2,7 +2,8 @@
     "name": "CodeWriter.StyleComponents.Editor",
     "references": [
         "CodeWriter.StyleComponents.Runtime",
-        "CodeWriter.ViewBinding"
+        "CodeWriter.ViewBinding",
+        "CodeWriter.ViewBinding.Applicators"
     ],
     "includePlatforms": [
         "Editor"
