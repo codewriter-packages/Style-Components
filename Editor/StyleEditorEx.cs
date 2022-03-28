@@ -1,62 +1,79 @@
+using System.Linq;
 using CodeWriter.ViewBinding;
+using JetBrains.Annotations;
+using UnityEditor;
+using UnityEngine;
 
 namespace CodeWriter.StyleComponents
 {
-    using System;
-    using UnityEditor;
-    using UnityEngine;
-    using Object = UnityEngine.Object;
-
     internal static class StyleEditorEx
     {
         private static readonly GUIContent ContextContent = new GUIContent("Context");
 
-        public static void DrawContextField(SerializedProperty contextProp)
+        public static void DrawContextField(SerializedProperty primaryContextProp,
+            [CanBeNull] SerializedProperty extraContextsProp)
         {
-            var context = contextProp.objectReferenceValue;
-            if (context == null)
-            {
-                GUILayout.BeginHorizontal();
-                EditorGUILayout.PrefixLabel(ContextContent);
-                EditorGUILayout.PropertyField(contextProp, GUIContent.none);
-                if (GUILayout.Button("Use Context", EditorStyles.miniButton, GUILayout.ExpandWidth(false)))
-                {
-                    UseTarget<MonoBehaviour>(contextProp.serializedObject, it =>
-                    {
-                        contextProp.objectReferenceValue = it.GetComponentInParent<ViewContext>();
-                        return true;
-                    });
-                }
+            var primaryRect = GUILayoutUtility.GetRect(GUIContent.none, GUI.skin.label);
+            var primaryContextRect = new Rect(primaryRect) {width = Mathf.Max(0, primaryRect.width - 100)};
+            var primaryActionRect = new Rect(primaryRect) {xMin = primaryContextRect.xMax};
 
-                GUILayout.EndHorizontal();
+            DoContextField(primaryContextRect, ContextContent, primaryContextProp);
+
+            if (GUI.Button(primaryActionRect, "Fill Context"))
+            {
+                FillContext(primaryContextProp, extraContextsProp);
             }
-            else
-            {
-                GUILayout.BeginHorizontal();
-                EditorGUILayout.PrefixLabel(ContextContent);
-                EditorGUILayout.PropertyField(contextProp, GUIContent.none);
-                if (GUILayout.Button("Reset Context", EditorStyles.miniButton, GUILayout.ExpandWidth(false)))
-                {
-                    UseTarget<MonoBehaviour>(contextProp.serializedObject, it =>
-                    {
-                        contextProp.objectReferenceValue = null;
-                        return true;
-                    });
-                }
 
-                GUILayout.EndHorizontal();
+            if (extraContextsProp != null)
+            {
+                for (var i = 0; i < extraContextsProp.arraySize; i++)
+                {
+                    var extraContextProp = extraContextsProp.GetArrayElementAtIndex(i);
+
+                    var extraRect = GUILayoutUtility.GetRect(GUIContent.none, GUI.skin.label);
+                    var extraContextRect = new Rect(extraRect) {width = Mathf.Max(0, extraRect.width - 100)};
+
+                    DoContextField(extraContextRect, new GUIContent(""), extraContextProp);
+                }
             }
         }
 
-        private static void UseTarget<T>(SerializedObject obj, Func<T, bool> action)
-            where T : Object
+        private static void FillContext(SerializedProperty primaryContextProp,
+            [CanBeNull] SerializedProperty extraContextsProp)
         {
-            obj.ApplyModifiedProperties();
-            var target = (T) obj.targetObject;
-            if (action(target))
+            if (primaryContextProp.serializedObject.targetObject is MonoBehaviour mb)
             {
-                EditorUtility.SetDirty(target);
+                var primaryContext = mb.GetComponentInParent<ViewContext>();
+                primaryContextProp.objectReferenceValue = primaryContext;
+
+                if (extraContextsProp != null)
+                {
+                    var extraContexts = Enumerable.Empty<ViewContextBase>()
+                        .Concat(mb.GetComponentsInParent<ViewContextBase>())
+                        .Where(it => it != null && it != mb && it != primaryContext)
+                        .ToList();
+
+                    extraContextsProp.arraySize = extraContexts.Count;
+                    for (var i = 0; i < extraContexts.Count; i++)
+                    {
+                        extraContextsProp.GetArrayElementAtIndex(i).objectReferenceValue = extraContexts[i];
+                    }
+                }
             }
+        }
+
+        private static void DoContextField(Rect position, GUIContent label, SerializedProperty property)
+        {
+            var labelRect = new Rect(position) {width = EditorGUIUtility.labelWidth};
+            var contentRect = new Rect(position) {xMin = labelRect.xMax};
+
+            var oldEnabled = GUI.enabled;
+            GUI.enabled = false;
+
+            GUI.Label(labelRect, label);
+            EditorGUI.PropertyField(contentRect, property, GUIContent.none);
+
+            GUI.enabled = oldEnabled;
         }
     }
 }

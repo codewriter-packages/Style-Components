@@ -9,6 +9,7 @@ namespace CodeWriter.StyleComponents
         private const string TargetPropName = "target";
         private const string AssetPropName = "asset";
         private const string ContextPropName = "context";
+        private const string ExtraContextsPropName = "extraContexts";
 
         private static readonly string[] ExcludedProperties =
         {
@@ -16,13 +17,14 @@ namespace CodeWriter.StyleComponents
             TargetPropName,
             AssetPropName,
             ContextPropName,
+            ExtraContextsPropName,
             StyleListEditor.StyleNamesPropName,
             StyleListEditor.StyleValuesPropName
         };
 
-        private SerializedProperty _targetProp;
         private SerializedProperty _assetProp;
         private SerializedProperty _contextProp;
+        private SerializedProperty _extraContextsProp;
         private StyleListEditor _selfStyleListEditor;
 
         private SerializedObject _styleAssetSerializedObject;
@@ -30,9 +32,9 @@ namespace CodeWriter.StyleComponents
 
         private void OnEnable()
         {
-            _targetProp = serializedObject.FindProperty(TargetPropName);
             _assetProp = serializedObject.FindProperty(AssetPropName);
             _contextProp = serializedObject.FindProperty(ContextPropName);
+            _extraContextsProp = serializedObject.FindProperty(ExtraContextsPropName);
             _selfStyleListEditor = new StyleListEditor(serializedObject, Apply, true);
         }
 
@@ -42,17 +44,10 @@ namespace CodeWriter.StyleComponents
 
             if (_contextProp != null)
             {
-                StyleEditorEx.DrawContextField(_contextProp);
+                StyleEditorEx.DrawContextField(_contextProp, _extraContextsProp);
             }
 
             DrawPropertiesExcluding(serializedObject, ExcludedProperties);
-
-            EditorGUILayout.ObjectField(_targetProp);
-
-            if (_targetProp.objectReferenceValue == null)
-            {
-                EditorGUILayout.HelpBox("Target is null", MessageType.Error);
-            }
 
             GUILayout.Space(10);
 
