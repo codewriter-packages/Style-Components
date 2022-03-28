@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace CodeWriter.StyleComponents
 {
     using UnityEngine;
@@ -15,11 +17,21 @@ namespace CodeWriter.StyleComponents
         [SerializeField]
         private ViewContextBase[] extraContexts = new ViewContextBase[0];
 
+        private StringBuilder _stringBuilder;
+
         protected override void Apply(Text target, string value)
         {
             if (context != null || extraContexts.Length != 0)
             {
-                target.text = TextFormatUtility.FormatText(value, context, extraContexts).ToString();
+                if (_stringBuilder == null)
+                {
+                    _stringBuilder = new StringBuilder();
+                }
+
+                _stringBuilder.Clear();
+                TextFormatUtility.FormatText(_stringBuilder, value, context, extraContexts);
+                target.text = _stringBuilder.ToString();
+                _stringBuilder.Clear();
             }
             else
             {
