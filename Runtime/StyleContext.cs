@@ -17,8 +17,6 @@ namespace CodeWriter.StyleComponents
         [SerializeField]
         private Variable[] variables = new Variable[0];
 
-        private Dictionary<string, MutableAtom<string>> _atoms = new Dictionary<string, MutableAtom<string>>();
-
         [Serializable]
         private class Variable
         {
@@ -47,24 +45,15 @@ namespace CodeWriter.StyleComponents
 
         public void SetVariable(string key, string value)
         {
-            if (_atoms.TryGetValue(key, out var atom))
+            var viewVariable = FindVariable<ViewVariableString>(key);
+            if (viewVariable != null)
             {
-                atom.Value = value;
+                viewVariable.SetValue(value);
             }
             else
             {
-                var viewVariable = FindVariable<ViewVariableString>(key);
-                if (viewVariable != null)
-                {
-                    atom = Atom.Value(value);
-                    _atoms.Add(key, atom);
-                    viewVariable.SetSource(() => atom.Value);
-                }
-                else
-                {
-                    var obj = gameObject;
-                    Debug.LogError($"Key {key} not exists at {obj.name}", obj);
-                }
+                var obj = gameObject;
+                Debug.LogError($"Key {key} not exists at {obj.name}", obj);
             }
         }
 
@@ -89,9 +78,7 @@ namespace CodeWriter.StyleComponents
                 else
 #endif
                 {
-                    var atom = Atom.Value(variable.defaultValue);
-                    _atoms.Add(variable.key, atom);
-                    viewVariable.SetSource(() => atom.Value);
+                    viewVariable.SetValue(variable.defaultValue);
                 }
 
                 UnsafeRegisterVariable(viewVariable);
