@@ -1,12 +1,10 @@
-using System.Collections.Generic;
-using UniMob;
-
 namespace CodeWriter.StyleComponents
 {
     using System;
     using UnityEngine;
     using ViewBinding;
 
+    [Obsolete("StyleContext is obsolete. Use ViewContext instead")]
     [AddComponentMenu("")]
     public class StyleContext : ViewContext
     {
@@ -24,22 +22,10 @@ namespace CodeWriter.StyleComponents
             public string defaultValue;
         }
 
-#if UNITY_EDITOR
-        protected override void OnValidate()
+        protected override void Awake()
         {
-            base.OnValidate();
+            base.Awake();
 
-            MigrateVariables();
-
-            if (variables.Length != 0)
-            {
-                variables = new Variable[0];
-            }
-        }
-#endif
-
-        private void Awake()
-        {
             MigrateVariables();
         }
 
@@ -59,6 +45,11 @@ namespace CodeWriter.StyleComponents
 
         private void MigrateVariables()
         {
+            if (variables == null || variables.Length == 0)
+            {
+                return;
+            }
+
             foreach (var variable in variables)
             {
                 if (FindVariable(variable.key) != null)
@@ -83,6 +74,22 @@ namespace CodeWriter.StyleComponents
 
                 UnsafeRegisterVariable(viewVariable);
             }
+        }
+
+        [ContextMenu("Migrate Legacy Variables", true)]
+        private bool CanMigrateVariablesAndClear()
+        {
+            return variables != null && variables.Length > 0;
+        }
+
+        [ContextMenu("Migrate Legacy Variables")]
+        private void MigrateVariablesAndClear()
+        {
+            MigrateVariables();
+            variables = new Variable[0];
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(this);
+#endif
         }
     }
 }

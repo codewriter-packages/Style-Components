@@ -3,6 +3,7 @@
     "references": [
         "CodeWriter.StyleComponents.Runtime",
         "CodeWriter.ViewBinding",
+        "CodeWriter.ViewBinding.Editor",
         "CodeWriter.ViewBinding.Applicators"
     ],
     "includePlatforms": [
