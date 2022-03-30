@@ -51,6 +51,16 @@ namespace CodeWriter.StyleComponents
 #endif
         }
 
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+
+            if (target == null || target.gameObject != gameObject)
+            {
+                target = GetComponent<TTarget>();
+            }
+        }
+
         protected override void Reset()
         {
             target = GetComponent<TTarget>();

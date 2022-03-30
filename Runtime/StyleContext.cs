@@ -1,14 +1,21 @@
+using System.Collections.Generic;
+using UniMob;
+
 namespace CodeWriter.StyleComponents
 {
     using System;
     using UnityEngine;
+    using ViewBinding;
 
-    public class StyleContext : MonoBehaviour
+    [AddComponentMenu("")]
+    public class StyleContext : ViewContext
     {
 #if ODIN_INSPECTOR
         [Sirenix.OdinInspector.TableList(AlwaysExpanded = true, ShowPaging = false)]
 #endif
-        [SerializeField] private Variable[] variables = new Variable[0];
+        [HideInInspector]
+        [SerializeField]
+        private Variable[] variables = new Variable[0];
 
         [Serializable]
         private class Variable
@@ -17,58 +24,64 @@ namespace CodeWriter.StyleComponents
             public string defaultValue;
         }
 
-        private string[] _variablesArray;
-
-        public string[] VariablesArray
-        {
-            get
-            {
 #if UNITY_EDITOR
-                if (!Application.isPlaying)
-                {
-                    return CreateVariablesArray(variables);
-                }
-#endif
-                EnsureVariablesArray();
+        protected override void OnValidate()
+        {
+            base.OnValidate();
 
-                return _variablesArray;
+            MigrateVariables();
+
+            if (variables.Length != 0)
+            {
+                variables = new Variable[0];
             }
         }
-        
-        private static string[] CreateVariablesArray(Variable[] variables)
+#endif
+
+        private void Awake()
         {
-            var array = new string[variables.Length * 2];
-
-            int index = 0;
-            foreach (var variable in variables)
-            {
-                array[index++] = variable.key;
-                array[index++] = variable.defaultValue;
-            }
-
-            return array;
+            MigrateVariables();
         }
 
         public void SetVariable(string key, string value)
         {
-            EnsureVariablesArray();
-        
-            for (var i = 0; i < _variablesArray.Length; i += 2)
+            var viewVariable = FindVariable<ViewVariableString>(key);
+            if (viewVariable != null)
             {
-                if (_variablesArray[i].Equals(key, StringComparison.InvariantCulture))
-                {
-                    _variablesArray[i + 1] = value;
-                    return;
-                }
+                viewVariable.SetValue(value);
             }
-
-            var obj = gameObject;
-            Debug.LogError($"Key {key} not exists at {obj.name}", obj);
+            else
+            {
+                var obj = gameObject;
+                Debug.LogError($"Key {key} not exists at {obj.name}", obj);
+            }
         }
 
-        private void EnsureVariablesArray() {
-            if (_variablesArray == null) {
-                _variablesArray = CreateVariablesArray(variables);
+        private void MigrateVariables()
+        {
+            foreach (var variable in variables)
+            {
+                if (FindVariable(variable.key) != null)
+                {
+                    continue;
+                }
+
+                var viewVariable = new ViewVariableString();
+                viewVariable.SetContext(this);
+                viewVariable.SetName(variable.key);
+
+#if UNITY_EDITOR
+                if (!Application.isPlaying)
+                {
+                    viewVariable.SetValueEditorOnly(variable.defaultValue);
+                }
+                else
+#endif
+                {
+                    viewVariable.SetValue(variable.defaultValue);
+                }
+
+                UnsafeRegisterVariable(viewVariable);
             }
         }
     }

@@ -1,29 +1,23 @@
+using CodeWriter.ViewBinding;
+
 namespace CodeWriter.StyleComponents
 {
     using System;
-    using JetBrains.Annotations;
     using UnityEngine;
 
     public abstract class Style : MonoBehaviour
     {
-        [SerializeField] private StyleContext context = default;
-
         public abstract string[] StyleNames { get; }
-
-        [CanBeNull] public StyleContext Context => context;
 
         public abstract void Apply(int styleIndex);
 
-        protected virtual void OnEnable() {
-            
-        }
-
         public void Apply(string styleName)
         {
-            if (!enabled) {
+            if (!enabled)
+            {
                 return;
             }
-        
+
             var index = Array.IndexOf(StyleNames, styleName);
             if (index == -1)
             {
@@ -34,20 +28,22 @@ namespace CodeWriter.StyleComponents
             Apply(index);
         }
 
-        protected bool TryGetContextVariables(out string[] variables)
-        {
-            if (Context != null && Context.VariablesArray != null)
-            {
-                variables = Context.VariablesArray;
-                return true;
-            }
-
-            variables = default;
-            return false;
-        }
-
         protected virtual void Reset()
         {
         }
+
+        protected virtual void Start()
+        {
+        }
+
+        protected virtual void OnValidate()
+        {
+        }
+
+#if UNITY_EDITOR
+        protected internal virtual void EditorTrackModifications(IEditorViewContextListener listener)
+        {
+        }
+#endif
     }
 }

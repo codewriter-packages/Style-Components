@@ -1,13 +1,20 @@
+using System;
+using CodeWriter.ViewBinding;
+using UnityEditor;
+using UnityEngine;
+using Object = UnityEngine.Object;
+
 namespace CodeWriter.StyleComponents
 {
-    using System;
-    using UnityEditor;
-    using UnityEngine;
-    using Object = UnityEngine.Object;
-
-    internal static class EditorUtilities
+    public class StyleContextMenu
     {
-        public static void ConvertScriptTo<T>(Object target) where T : Object
+        [MenuItem("CONTEXT/StyleContext/Convert To View Context")]
+        private static void ConvertToViewContext(MenuCommand command)
+        {
+            ConvertScriptTo<ViewContext>(command.context as MonoBehaviour);
+        }
+
+        private static void ConvertScriptTo<T>(Object target) where T : Object
         {
             if (target == null)
             {

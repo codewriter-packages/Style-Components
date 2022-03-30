@@ -8,22 +8,20 @@ namespace CodeWriter.StyleComponents
     using Object = UnityEngine.Object;
 
     [CustomEditor(typeof(StyleCompose))]
-    public class StyleComposeEditor : Editor {
+    public class StyleComposeEditor : Editor
+    {
         private const string ChildrenPropName = "children";
         private const string DataPropName = "data";
-        private const string ContextPropName = "context";
 
-        private static readonly string[] ExcludedProperties = {"m_Script", DataPropName, ContextPropName, ChildrenPropName};
+        private static readonly string[] ExcludedProperties = {"m_Script", DataPropName, ChildrenPropName};
 
         private SerializedProperty _dataProp;
-        private SerializedProperty _contextProp;
         private SerializedProperty _childrenProp;
         private ReorderableList _list;
 
         private void OnEnable()
         {
             _dataProp = serializedObject.FindProperty(DataPropName);
-            _contextProp = serializedObject.FindProperty(ContextPropName);
             _childrenProp = serializedObject.FindProperty(ChildrenPropName);
             _list = CreateList(serializedObject, _dataProp);
         }
@@ -32,27 +30,9 @@ namespace CodeWriter.StyleComponents
         {
             serializedObject.Update();
 
-            StyleEditorEx.DrawContextField(this._contextProp);
-
             DrawPropertiesExcluding(serializedObject, ExcludedProperties);
-            
-            EditorGUI.BeginDisabledGroup(true);
-            EditorGUILayout.PropertyField(this._childrenProp);
-            EditorGUI.EndDisabledGroup();
 
-            GUILayout.Space(5);
-
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Fill Children", GUILayout.Width(220), GUILayout.Height(26)))
-            {
-                FillChildren(serializedObject);
-            }
-
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-
-            GUILayout.Space(10);
+            DoChildrenGUI();
 
             _list.DoLayoutList();
 
@@ -60,7 +40,49 @@ namespace CodeWriter.StyleComponents
 
             serializedObject.ApplyModifiedProperties();
         }
-        
+
+        private void DoChildrenGUI()
+        {
+            var headerRect = GUILayoutUtility.GetRect(GUIContent.none, GUI.skin.label);
+            var headerLabelRect = new Rect(headerRect)
+            {
+                width = EditorGUIUtility.labelWidth
+            };
+            var headerContentRect = new Rect(headerRect)
+            {
+                xMin = headerLabelRect.xMax
+            };
+
+            EditorGUI.BeginDisabledGroup(true);
+            EditorGUI.PropertyField(headerLabelRect, _childrenProp, false);
+
+            if (_childrenProp.isExpanded)
+            {
+                EditorGUI.indentLevel++;
+
+                for (int i = 0, len = _childrenProp.arraySize; i < len; i++)
+                {
+                    EditorGUILayout.PropertyField(_childrenProp.GetArrayElementAtIndex(i));
+                }
+
+                if (_childrenProp.arraySize == 0)
+                {
+                    GUILayout.Label("No listeners");
+                }
+
+                EditorGUI.indentLevel--;
+            }
+
+            EditorGUI.EndDisabledGroup();
+
+            if (GUI.Button(headerContentRect, "Fill Children"))
+            {
+                FillChildren(serializedObject);
+            }
+
+            EditorGUILayout.Space();
+        }
+
         private static ReorderableList CreateList(SerializedObject serializedObject, SerializedProperty property)
         {
             return new ReorderableList(serializedObject, property, false, true, true, true)
@@ -113,8 +135,9 @@ namespace CodeWriter.StyleComponents
                         {
                             styleIndex = 0;
                         }
-                        
-                        if (child.StyleNames.Length > 0) {
+
+                        if (child.StyleNames.Length > 0)
+                        {
                             EditorGUI.BeginChangeCheck();
 
                             styleIndex = EditorGUI.Popup(valueRect, styleIndex, child.StyleNames);
@@ -128,10 +151,12 @@ namespace CodeWriter.StyleComponents
                                 Apply(serializedObject, index);
                             }
                         }
-                        else {
+                        else
+                        {
                             var color = GUI.color;
                             GUI.color *= Color.yellow;
-                            if (GUI.Button(valueRect, "No styles found. Click to select invalid object")) {
+                            if (GUI.Button(valueRect, "No styles found. Click to select invalid object"))
+                            {
                                 EditorGUIUtility.PingObject(child);
                             }
 

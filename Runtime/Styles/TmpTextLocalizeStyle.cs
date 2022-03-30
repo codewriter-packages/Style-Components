@@ -4,14 +4,14 @@ using System.Text;
 
 namespace CodeWriter.StyleComponents
 {
-    using TMPro;
     using UnityEngine;
     using StyleAssets;
     using ViewBinding;
+    using TMPro;
 
     [RequireComponent(typeof(TMP_Text))]
-    [AddComponentMenu("Style Components/Tmp Text Style")]
-    public sealed class TmpTextStyle : Style<TMP_Text, string, TextStyleAsset>
+    [AddComponentMenu("Style Components/Text Localize Style")]
+    public sealed class TmpTextLocalizeStyle : Style<TMP_Text, string, TextStyleAsset>
     {
         [SerializeField]
         private ViewContextBase context = default;
@@ -29,6 +29,9 @@ namespace CodeWriter.StyleComponents
             }
 
             TextFormatUtility.FormatText(_stringBuilder, value, context, extraContexts);
+            var localizedString = BindingsLocalization.Localize(_stringBuilder);
+
+            TextFormatUtility.FormatText(_stringBuilder, localizedString, context, extraContexts);
             target.SetText(_stringBuilder);
         }
 
@@ -43,4 +46,5 @@ namespace CodeWriter.StyleComponents
 #endif
     }
 }
+
 #endif
