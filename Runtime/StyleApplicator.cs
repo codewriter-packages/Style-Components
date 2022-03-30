@@ -12,23 +12,5 @@ namespace CodeWriter.StyleComponents
         {
             target.Apply(source.Value);
         }
-
-#if UNITY_EDITOR
-        public override void OnEditorContextVariableChanged(ViewVariable variable)
-        {
-            Apply();
-        }
-
-        protected override void OnValidate()
-        {
-            base.OnValidate();
-
-            var target = GetTarget();
-            if (target != null)
-            {
-                target.EditorTrackModifications(this);
-            }
-        }
-#endif
     }
 }

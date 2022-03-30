@@ -31,16 +31,6 @@ namespace CodeWriter.StyleComponents
             TextFormatUtility.FormatText(_stringBuilder, value, context, extraContexts);
             target.SetText(_stringBuilder);
         }
-
-#if UNITY_EDITOR
-        protected internal override void EditorTrackModifications(IEditorViewContextListener listener)
-        {
-            base.EditorTrackModifications(listener);
-
-            listener.EditorTrackModificationsOf(context);
-            listener.EditorTrackModificationsOf(extraContexts);
-        }
-#endif
     }
 }
 #endif

@@ -61,13 +61,6 @@ namespace CodeWriter.StyleComponents
                 }
 
                 primaryContextProp.serializedObject.ApplyModifiedProperties();
-
-                if (mb.gameObject.TryGetComponent(out StyleApplicator styleApplicator) && 
-                    styleApplicator.GetTarget() is var styleTarget &&
-                    styleTarget != null)
-                {
-                    styleTarget.EditorTrackModifications(styleApplicator);
-                }
             }
         }
 
