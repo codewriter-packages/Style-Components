@@ -10,7 +10,7 @@ namespace CodeWriter.StyleComponents
     using TMPro;
 
     [RequireComponent(typeof(TMP_Text))]
-    [AddComponentMenu("Style Components/Text Localize Style")]
+    [AddComponentMenu("Style Components/Tmp Text Localize Style")]
     public sealed class TmpTextLocalizeStyle : Style<TMP_Text, string, TextStyleAsset>
     {
         [SerializeField]
