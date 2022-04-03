@@ -263,6 +263,7 @@ namespace CodeWriter.StyleComponents
                     .Where(style => style != null)
                     .Where(style => style != target)
                     .Where(style => style.transform.GetComponentInParent<StyleCompose>() == target)
+                    .Where(style => style.GetComponent<StyleApplicator>() == null)
                     .ToArray();
 
                 return true;
