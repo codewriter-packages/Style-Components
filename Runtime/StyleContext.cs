@@ -8,10 +8,6 @@ namespace CodeWriter.StyleComponents
     [AddComponentMenu("")]
     public class StyleContext : ViewContext
     {
-#if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.TableList(AlwaysExpanded = true, ShowPaging = false)]
-#endif
-        [HideInInspector]
         [SerializeField]
         private Variable[] variables = new Variable[0];
 
