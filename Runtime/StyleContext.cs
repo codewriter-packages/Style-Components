@@ -22,7 +22,7 @@ namespace CodeWriter.StyleComponents
 
         protected override ViewVariable GetVariable(int index)
         {
-            MigrateVariables(); 
+            MigrateVariables();
             return base.GetVariable(index);
         }
 
@@ -49,7 +49,12 @@ namespace CodeWriter.StyleComponents
                 return;
             }
 
-            foreach (var variable in variables)
+            var copy = new Variable[variables.Length];
+            Array.Copy(variables, copy, variables.Length);
+
+            variables = null;
+
+            foreach (var variable in copy)
             {
                 if (FindVariable(variable.key) != null)
                 {
@@ -73,8 +78,6 @@ namespace CodeWriter.StyleComponents
 
                 UnsafeRegisterVariable(viewVariable);
             }
-
-            variables = null;
         }
 
         [ContextMenu("Migrate Legacy Variables", true)]
