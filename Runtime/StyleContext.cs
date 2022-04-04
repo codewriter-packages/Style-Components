@@ -18,15 +18,10 @@ namespace CodeWriter.StyleComponents
             public string defaultValue;
         }
 
-        protected override void Awake()
-        {
-            base.Awake();
-
-            MigrateVariables();
-        }
-
         public void SetVariable(string key, string value)
         {
+            MigrateVariables();
+
             var viewVariable = FindVariable<ViewVariableString>(key);
             if (viewVariable != null)
             {
@@ -70,6 +65,8 @@ namespace CodeWriter.StyleComponents
 
                 UnsafeRegisterVariable(viewVariable);
             }
+
+            variables = null;
         }
 
         [ContextMenu("Migrate Legacy Variables", true)]
