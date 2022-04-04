@@ -18,6 +18,14 @@ namespace CodeWriter.StyleComponents
             public string defaultValue;
         }
 
+        protected override int VariablesCount => base.VariablesCount + (variables?.Length ?? 0);
+
+        protected override ViewVariable GetVariable(int index)
+        {
+            MigrateVariables(); 
+            return base.GetVariable(index);
+        }
+
         public void SetVariable(string key, string value)
         {
             MigrateVariables();
