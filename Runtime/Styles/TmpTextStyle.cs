@@ -1,5 +1,3 @@
-using System.Text;
-
 #if TEXT_MESH_PRO
 
 namespace CodeWriter.StyleComponents
@@ -19,17 +17,18 @@ namespace CodeWriter.StyleComponents
         [SerializeField]
         private ViewContextBase[] extraContexts = new ViewContextBase[0];
 
-        private StringBuilder _stringBuilder;
-
         protected override void Apply(TMP_Text target, string value)
         {
-            if (_stringBuilder == null)
+            var textBuilder = new ValueTextBuilder(ValueTextBuilder.DefaultCapacity);
+            try
             {
-                _stringBuilder = new StringBuilder();
+                TextFormatUtility.FormatText(ref textBuilder, value, context, extraContexts);
+                target.SetText(textBuilder.RawCharArray, 0, textBuilder.Length);
             }
-
-            TextFormatUtility.FormatText(_stringBuilder, value, context, extraContexts);
-            target.SetText(_stringBuilder);
+            finally
+            {
+                textBuilder.Dispose();
+            }
         }
     }
 }
