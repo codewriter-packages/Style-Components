@@ -10,7 +10,7 @@ namespace CodeWriter.StyleComponents
     {
         protected override void Apply(Style target, ViewVariableString source)
         {
-            target.Apply(source.Value);
+            target.Apply(source.Value, link: true);
         }
     }
 }

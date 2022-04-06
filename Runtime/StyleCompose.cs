@@ -52,7 +52,7 @@ namespace CodeWriter.StyleComponents
                     continue;
                 }
 
-                child.target.Apply(child.style);
+                child.target.Apply(child.style, link: true);
             }
         }
     }

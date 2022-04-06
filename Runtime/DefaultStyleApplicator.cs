@@ -24,7 +24,7 @@ namespace CodeWriter.StyleComponents
                 return;
             }
 
-            target.Apply(styleName);
+            target.Apply(styleName, link: true);
 
 #if UNITY_EDITOR
             if (!Application.isPlaying)

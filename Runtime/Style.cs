@@ -1,3 +1,5 @@
+using UniMob;
+
 namespace CodeWriter.StyleComponents
 {
     using System;
@@ -9,21 +11,29 @@ namespace CodeWriter.StyleComponents
 
         public abstract void Apply(int styleIndex);
 
-        public void Apply(string styleName)
+        public void Apply(string styleName, bool link = false)
         {
             if (!enabled)
             {
                 return;
             }
 
-            var index = Array.IndexOf(StyleNames, styleName);
-            if (index == -1)
+            var noWatch = link ? null : Atom.NoWatch;
+            try
             {
-                Debug.LogError($"No style with name '{styleName}' at '{name}'");
-                index = 0;
-            }
+                var index = Array.IndexOf(StyleNames, styleName);
+                if (index == -1)
+                {
+                    Debug.LogError($"No style with name '{styleName}' at '{name}'");
+                    index = 0;
+                }
 
-            Apply(index);
+                Apply(index);
+            }
+            finally
+            {
+                noWatch?.Dispose();
+            }
         }
 
         protected virtual void Reset()
