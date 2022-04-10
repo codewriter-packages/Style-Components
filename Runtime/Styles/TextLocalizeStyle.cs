@@ -21,10 +21,10 @@ namespace CodeWriter.StyleComponents
             var localizedTextBuilder = new ValueTextBuilder(ValueTextBuilder.DefaultCapacity);
             try
             {
-                TextFormatUtility.FormatText(ref formatTextBuilder, value, context, extraContexts);
+                formatTextBuilder.AppendFormat(value, context, extraContexts);
                 var localizedString = BindingsLocalization.Localize(ref formatTextBuilder);
 
-                TextFormatUtility.FormatText(ref localizedTextBuilder, localizedString, context, extraContexts);
+                localizedTextBuilder.AppendFormat(localizedString, context, extraContexts);
                 target.text = localizedTextBuilder.ToString();
             }
             finally

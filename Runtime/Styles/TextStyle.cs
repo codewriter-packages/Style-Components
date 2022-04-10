@@ -20,7 +20,7 @@ namespace CodeWriter.StyleComponents
             var textBuilder = new ValueTextBuilder(ValueTextBuilder.DefaultCapacity);
             try
             {
-                TextFormatUtility.FormatText(ref textBuilder, value, context, extraContexts);
+                textBuilder.AppendFormat(value, context, extraContexts);
                 target.text = textBuilder.ToString();
             }
             finally
