@@ -2,10 +2,10 @@
   "name": "com.codewriter.stylecomponents",
   "displayName": "Style Components",
   "description": "Library for styling game objects in Unity",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "unity": "2019.3",
   "license": "MIT",
-  "author": "Vlad Vanifatov (https://github.com/vanifatovvlad)",
+  "author": "CodeWriter (https://github.com/orgs/codewriter-packages)",
   "homepage": "https://github.com/codewriter-packages/Style-Components#readme",
   "dependencies": {}
 }
