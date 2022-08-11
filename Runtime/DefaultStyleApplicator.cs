@@ -4,7 +4,7 @@ using UnityEngine;
 namespace CodeWriter.StyleComponents
 {
     [RequireComponent(typeof(Style))]
-    [AddComponentMenu("View Binding/Style Applicator (Default)")]
+    [AddComponentMenu("View Binding/[Binding] Style Applicator (Default)")]
     public class DefaultStyleApplicator : ApplicatorBase
     {
 #if ODIN_INSPECTOR
