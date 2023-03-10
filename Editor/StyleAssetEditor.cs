@@ -17,7 +17,9 @@ namespace CodeWriter.StyleComponents
 
         private void OnEnable()
         {
-            _styleListEditor = new StyleListEditor(serializedObject, Apply, true);
+            var elementType = ((StyleAsset) target).ElementType;
+
+            _styleListEditor = new StyleListEditor(serializedObject, Apply, true, elementType);
         }
 
         public override void OnInspectorGUI()

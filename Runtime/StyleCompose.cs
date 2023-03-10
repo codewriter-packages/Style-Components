@@ -34,6 +34,8 @@ namespace CodeWriter.StyleComponents
             set => data = value;
         }
 
+        public override Type ElementType => typeof(string);
+
         public override string[] StyleNames => Array.ConvertAll(data, d => d.name);
 
         public sealed override void Apply(int styleIndex)

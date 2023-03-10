@@ -7,6 +7,8 @@ namespace CodeWriter.StyleComponents
 
     public abstract class Style : MonoBehaviour
     {
+        public abstract Type ElementType { get; }
+
         public abstract string[] StyleNames { get; }
 
         public abstract void Apply(int styleIndex);

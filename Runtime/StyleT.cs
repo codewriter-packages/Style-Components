@@ -1,3 +1,5 @@
+using System;
+
 namespace CodeWriter.StyleComponents
 {
     using UnityEngine;
@@ -9,6 +11,8 @@ namespace CodeWriter.StyleComponents
 
         [SerializeField] private string[] styleNames = default;
         [SerializeField] private TValue[] styleValues = default;
+
+        public sealed override Type ElementType => typeof(TValue);
 
         public override string[] StyleNames => styleNames;
 

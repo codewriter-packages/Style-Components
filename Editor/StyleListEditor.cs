@@ -10,25 +10,30 @@ namespace CodeWriter.StyleComponents
         public const string StyleNamesPropName = "styleNames";
         public const string StyleValuesPropName = "styleValues";
 
+        private static readonly GUIContent EmptyContent = new GUIContent();
         private static readonly GUIContent NameContent = new GUIContent("Name");
         private static readonly GUIContent ValueContent = new GUIContent("Value");
 
         private readonly SerializedObject _serializedObject;
         private readonly Action<int> _apply;
         private readonly bool _editable;
+        private readonly Type _elementType;
         private readonly SerializedProperty _styleNamesProp;
         private readonly SerializedProperty _styleValuesProp;
         private readonly ReorderableList _styleList;
+        private readonly GUIContent _handleIconContent;
 
-        public StyleListEditor(SerializedObject serializedObject, Action<int> apply, bool editable)
+        public StyleListEditor(SerializedObject serializedObject, Action<int> apply, bool editable, Type elementType)
         {
             _serializedObject = serializedObject;
             _apply = apply;
             _editable = editable;
+            _elementType = elementType;
             _styleNamesProp = serializedObject.FindProperty(StyleNamesPropName);
             _styleValuesProp = serializedObject.FindProperty(StyleValuesPropName);
 
             _styleList = CreateStyleList(_styleNamesProp, _styleValuesProp);
+            _handleIconContent = EditorGUIUtility.IconContent("Toolbar Minus");
         }
 
         public void DoLayout()
@@ -38,6 +43,8 @@ namespace CodeWriter.StyleComponents
 
         private ReorderableList CreateStyleList(SerializedProperty namesProp, SerializedProperty valuesProp)
         {
+            var isSprite = typeof(Sprite).IsAssignableFrom(_elementType);
+
             return new ReorderableList(namesProp.serializedObject, namesProp, false, true, true, true)
             {
                 drawHeaderCallback = rect => GUI.Label(rect, "Styles"),
@@ -69,7 +76,22 @@ namespace CodeWriter.StyleComponents
                     //
                     _apply(list.index);
                 },
-                elementHeight = EditorGUIUtility.singleLineHeight * 2.5f,
+                elementHeight = isSprite ? 50 : EditorGUIUtility.singleLineHeight,
+                drawElementBackgroundCallback = (rect, index, active, focused) =>
+                {
+                    if (focused)
+                    {
+                        ReorderableList.defaultBehaviours.DrawElementBackground(rect, index, active, true, false);
+                        return;
+                    }
+
+                    if (index % 2 != 1) return;
+
+                    var oldColor = GUI.color;
+                    GUI.color = new Color(1, 1, 1, 0.3f);
+                    GUI.DrawTexture(rect, EditorGUIUtility.whiteTexture);
+                    GUI.color = oldColor;
+                },
                 drawElementCallback = (rect, index, active, focused) =>
                 {
                     var nameProp = namesProp.GetArrayElementAtIndex(index);
@@ -78,17 +100,41 @@ namespace CodeWriter.StyleComponents
                     var oldEnabled = GUI.enabled;
                     GUI.enabled = _editable;
 
-                    EditorGUIUtility.labelWidth -= 50;
+                    if (isSprite)
+                    {
+                        var previewRect = new Rect(rect)
+                        {
+                            xMin = rect.xMax - 50,
+                        };
+
+                        DrawTexturePreview(previewRect, (Sprite) valueProp.objectReferenceValue);
+
+                        rect.xMax -= 50;
+                    }
 
                     rect.height = EditorGUIUtility.singleLineHeight;
-                    EditorGUI.PropertyField(rect, nameProp, NameContent);
 
-                    EditorGUIUtility.labelWidth += 50;
+                    var handleRect = new Rect(rect)
+                    {
+                        xMax = rect.xMin + 30,
+                    };
+                    var nameRect = new Rect(rect)
+                    {
+                        xMin = handleRect.xMax,
+                        xMax = rect.xMin + EditorGUIUtility.labelWidth,
+                    };
+                    var valueRect = new Rect(rect)
+                    {
+                        xMin = nameRect.xMax,
+                    };
+
+                    GUI.Label(handleRect, _handleIconContent);
+
+                    EditorGUI.PropertyField(nameRect, nameProp, EmptyContent);
 
                     EditorGUI.BeginChangeCheck();
 
-                    rect.y += rect.height;
-                    EditorGUI.PropertyField(rect, valueProp, ValueContent);
+                    EditorGUI.PropertyField(valueRect, valueProp, EmptyContent);
 
                     GUI.enabled = oldEnabled;
 
@@ -98,6 +144,37 @@ namespace CodeWriter.StyleComponents
                     }
                 },
             };
+        }
+
+        private static void DrawTexturePreview(Rect position, Sprite sprite, float padding = 3)
+        {
+            if (sprite == null)
+            {
+                return;
+            }
+
+            position.xMin += padding;
+            position.yMin += padding;
+            position.xMax -= padding;
+            position.yMax -= padding;
+
+            var texRect = sprite.textureRect;
+            var fullSize = new Vector2(sprite.texture.width, sprite.texture.height);
+            var invFullSize = new Vector2(1f / fullSize.x, 1f / fullSize.y);
+            var size = new Vector2(texRect.width, texRect.height);
+            var invSize = new Vector2(1f / size.x, 1f / size.y);
+
+            var coords = new Rect(
+                Vector2.Scale(texRect.position, invFullSize),
+                Vector2.Scale(texRect.size, invFullSize));
+            var ratio = Vector2.Scale(position.size, invSize);
+            var minRatio = Mathf.Min(ratio.x, ratio.y);
+
+            var center = position.center;
+            position.size = size * minRatio;
+            position.center = center;
+
+            GUI.DrawTextureWithTexCoords(position, sprite.texture, coords);
         }
     }
 }

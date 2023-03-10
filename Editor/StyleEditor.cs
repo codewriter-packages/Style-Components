@@ -1,3 +1,5 @@
+using System;
+
 namespace CodeWriter.StyleComponents
 {
     using UnityEditor;
@@ -22,6 +24,8 @@ namespace CodeWriter.StyleComponents
             StyleListEditor.StyleValuesPropName
         };
 
+        private Type _elementType;
+        
         private SerializedProperty _assetProp;
         private SerializedProperty _contextProp;
         private SerializedProperty _extraContextsProp;
@@ -32,10 +36,12 @@ namespace CodeWriter.StyleComponents
 
         private void OnEnable()
         {
+            _elementType = ((Style) target).ElementType;
+            
             _assetProp = serializedObject.FindProperty(AssetPropName);
             _contextProp = serializedObject.FindProperty(ContextPropName);
             _extraContextsProp = serializedObject.FindProperty(ExtraContextsPropName);
-            _selfStyleListEditor = new StyleListEditor(serializedObject, Apply, true);
+            _selfStyleListEditor = new StyleListEditor(serializedObject, Apply, true, _elementType);
         }
 
         public override void OnInspectorGUI()
@@ -63,7 +69,7 @@ namespace CodeWriter.StyleComponents
                     _styleAssetSerializedObject?.Dispose();
 
                     _styleAssetSerializedObject = new SerializedObject(_assetProp.objectReferenceValue);
-                    _assetStyleListEditor = new StyleListEditor(_styleAssetSerializedObject, Apply, false);
+                    _assetStyleListEditor = new StyleListEditor(_styleAssetSerializedObject, Apply, false, _elementType);
                 }
 
                 _assetStyleListEditor.DoLayout();
