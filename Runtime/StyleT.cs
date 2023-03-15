@@ -95,5 +95,17 @@ namespace CodeWriter.StyleComponents
             value = asset.StyleValues[styleIndex];
             return true;
         }
+
+        protected override string GetStyleNotExistError(string styleName)
+        {
+            var str = base.GetStyleNotExistError(styleName);
+
+            if (asset != null)
+            {
+                str += $" (asset: '{asset.name}')";
+            }
+
+            return str;
+        }
     }
 }

@@ -26,7 +26,7 @@ namespace CodeWriter.StyleComponents
                 var index = Array.IndexOf(StyleNames, styleName);
                 if (index == -1)
                 {
-                    Debug.LogError($"No style with name '{styleName}' at '{name}'");
+                    Debug.LogError(GetStyleNotExistError(styleName), this);
                     index = 0;
                 }
 
@@ -48,6 +48,11 @@ namespace CodeWriter.StyleComponents
 
         protected virtual void OnValidate()
         {
+        }
+
+        protected virtual string GetStyleNotExistError(string styleName)
+        {
+            return $"No style with name '{styleName}' at '{name}'";
         }
     }
 }
