@@ -45,7 +45,12 @@ namespace CodeWriter.StyleComponents
         {
             var isSprite = typeof(Sprite).IsAssignableFrom(_elementType);
 
-            return new ReorderableList(namesProp.serializedObject, namesProp, false, true, true, true)
+            float GetSpritePreviewSize()
+            {
+                return namesProp.arraySize <= 15 ? 50 : 30;
+            }
+
+            return new ReorderableList(namesProp.serializedObject, namesProp, true, true, true, true)
             {
                 drawHeaderCallback = rect => GUI.Label(rect, "Styles"),
                 onAddCallback = list =>
@@ -71,12 +76,16 @@ namespace CodeWriter.StyleComponents
                     valuesProp.DeleteArrayElementAtIndex(index);
                     namesProp.DeleteArrayElementAtIndex(index);
                 },
+                onReorderCallbackWithDetails = (list, oldIndex, newIndex) =>
+                {
+                    valuesProp.MoveArrayElement(oldIndex, newIndex);
+                },
                 onSelectCallback = list =>
                 {
                     //
                     _apply(list.index);
                 },
-                elementHeight = isSprite ? 50 : EditorGUIUtility.singleLineHeight,
+                elementHeight = isSprite ? GetSpritePreviewSize() : EditorGUIUtility.singleLineHeight,
                 drawElementBackgroundCallback = (rect, index, active, focused) =>
                 {
                     if (focused)
@@ -88,7 +97,7 @@ namespace CodeWriter.StyleComponents
                     if (index % 2 != 1) return;
 
                     var oldColor = GUI.color;
-                    GUI.color = new Color(1, 1, 1, 0.3f);
+                    GUI.color *= new Color(1, 1, 1, 0.3f);
                     GUI.DrawTexture(rect, EditorGUIUtility.whiteTexture);
                     GUI.color = oldColor;
                 },
@@ -102,33 +111,27 @@ namespace CodeWriter.StyleComponents
 
                     if (isSprite)
                     {
+                        var previewSize = GetSpritePreviewSize();
                         var previewRect = new Rect(rect)
                         {
-                            xMin = rect.xMax - 50,
+                            xMin = rect.xMax - previewSize - 3,
                         };
 
                         DrawTexturePreview(previewRect, (Sprite) valueProp.objectReferenceValue);
 
-                        rect.xMax -= 50;
+                        rect.xMax -= previewSize + 6;
                     }
 
                     rect.height = EditorGUIUtility.singleLineHeight;
 
-                    var handleRect = new Rect(rect)
-                    {
-                        xMax = rect.xMin + 30,
-                    };
                     var nameRect = new Rect(rect)
                     {
-                        xMin = handleRect.xMax,
                         xMax = rect.xMin + EditorGUIUtility.labelWidth,
                     };
                     var valueRect = new Rect(rect)
                     {
-                        xMin = nameRect.xMax,
+                        xMin = nameRect.xMax + 3,
                     };
-
-                    GUI.Label(handleRect, _handleIconContent);
 
                     EditorGUI.PropertyField(nameRect, nameProp, EmptyContent);
 
