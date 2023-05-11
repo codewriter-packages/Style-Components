@@ -94,12 +94,21 @@ namespace CodeWriter.StyleComponents
                         return;
                     }
 
-                    if (index % 2 != 1) return;
+                    var valueProp = valuesProp.GetArrayElementAtIndex(index);
 
-                    var oldColor = GUI.color;
-                    GUI.color *= new Color(1, 1, 1, 0.3f);
-                    GUI.DrawTexture(rect, EditorGUIUtility.whiteTexture);
-                    GUI.color = oldColor;
+                    if (valueProp.propertyType == SerializedPropertyType.ObjectReference)
+                    {
+                        if (valueProp.objectReferenceValue == null)
+                        {
+                            DrawBackground(rect, new Color(0.95f, 0.05f, 0.05f, 0.5f));
+                            return;
+                        }
+                    }
+
+                    if (index % 2 != 0)
+                    {
+                        DrawBackground(rect, new Color(1, 1, 1, 0.3f));
+                    }
                 },
                 drawElementCallback = (rect, index, active, focused) =>
                 {
@@ -178,6 +187,14 @@ namespace CodeWriter.StyleComponents
             position.center = center;
 
             GUI.DrawTextureWithTexCoords(position, sprite.texture, coords);
+        }
+
+        private static void DrawBackground(Rect rect, Color color)
+        {
+            var oldColor = GUI.color;
+            GUI.color *= color;
+            GUI.DrawTexture(rect, EditorGUIUtility.whiteTexture);
+            GUI.color = oldColor;
         }
     }
 }
