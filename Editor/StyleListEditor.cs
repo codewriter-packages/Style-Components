@@ -88,6 +88,11 @@ namespace CodeWriter.StyleComponents
                 elementHeight = isSprite ? GetSpritePreviewSize() : EditorGUIUtility.singleLineHeight,
                 drawElementBackgroundCallback = (rect, index, active, focused) =>
                 {
+                    if (index < 0 || index >= valuesProp.arraySize)
+                    {
+                        return;
+                    }
+                    
                     if (focused)
                     {
                         ReorderableList.defaultBehaviours.DrawElementBackground(rect, index, active, true, false);
@@ -112,6 +117,11 @@ namespace CodeWriter.StyleComponents
                 },
                 drawElementCallback = (rect, index, active, focused) =>
                 {
+                    if (index < 0 || index >= valuesProp.arraySize || index >= namesProp.arraySize)
+                    {
+                        return;
+                    }
+
                     var nameProp = namesProp.GetArrayElementAtIndex(index);
                     var valueProp = valuesProp.GetArrayElementAtIndex(index);
 
