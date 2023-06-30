@@ -1,4 +1,5 @@
 using CodeWriter.ViewBinding;
+using TriInspector;
 using UnityEngine;
 
 namespace CodeWriter.StyleComponents
@@ -7,9 +8,7 @@ namespace CodeWriter.StyleComponents
     [AddComponentMenu("View Binding/[Binding] Style Applicator (Default)")]
     public class DefaultStyleApplicator : ApplicatorBase
     {
-#if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.Required]
-#endif
+        [Required]
         [SerializeField]
         private Style target;
 
