@@ -1,5 +1,6 @@
 ﻿using System;
 using CodeWriter.ViewBinding;
+using TriInspector;
 using UnityEngine;
 
 namespace CodeWriter.StyleComponents.Adapters
@@ -13,10 +14,8 @@ namespace CodeWriter.StyleComponents.Adapters
         [SerializeField]
         private ViewVariableString styleName;
 
+        [Required]
         [SerializeField]
-#if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.Required]
-#endif
         private TStyleAsset styleAsset;
 
         protected sealed override TResult Adapt()

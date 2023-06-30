@@ -1,15 +1,17 @@
 {
     "name": "CodeWriter.StyleComponents.Runtime",
+    "rootNamespace": "",
     "references": [
         "Unity.TextMeshPro",
         "CodeWriter.ViewBinding",
         "CodeWriter.ViewBinding.Applicators",
-        "UniMob"
+        "UniMob",
+        "TriInspector"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
+    "overrideReferences": true,
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
